@@ -25,11 +25,74 @@ function preload() {    // Loading images
     this.load.spritesheet('bird', 'assets/bird.png', { frameWidth: 64, frameHeight: 96 });
 }
 
+let isGameStarted = false;
+let bird;
+let hasLanded = false;
+let hasBumped = false;
+let cursors;
+
+let messageToPlayer;
+
 function create() {
+  cursors = this.input.keyboard.createCursorKeys();
   const background = this.add.image(0, 0, 'background').setOrigin(0, 0);
   const roads = this.physics.add.staticGroup();
+
+  const topColumns = this.physics.add.staticGroup({ // Top columns of the game
+    key: 'column',
+    repeat: 1,
+    setXY: { x: 200, y: 0, stepX: 300 }
+  });
+
+  const bottomColumns = this.physics.add.staticGroup({ // Bottom columns
+    key: 'column',
+    repeat: 1,
+    setXY: { x: 350, y: 400, stepX: 300 },
+  });
+
   const road = roads.create(400, 568, 'road').setScale(2).refreshBody();
+
+  bird = this.physics.add.sprite(0, 50, 'bird').setScale(2);
+  bird.setBounce(0.2);
+  bird.setCollideWorldBounds(true);
+
+  this.physics.add.overlap(bird, road, () => hasLanded = true, null, this);
+  this.physics.add.collider(bird, road);
+
+  this.physics.add.overlap(bird, topColumns, ()=>hasBumped=true,null, this);
+  this.physics.add.overlap(bird, bottomColumns, ()=>hasBumped=true,null, this);
+  this.physics.add.collider(bird, topColumns);
+  this.physics.add.collider(bird, bottomColumns);
+
+  messageToPlayer = this.add.text(0, 0, 'Instructions: Press space bar to start', { 
+    fontFamily: 'Comic Sans MS, Times, serif', 
+    fontSize: "20px", 
+    fill: "white", 
+    backgroundColor: "black"
+  });
+  Phaser.Display.Align.In.BottomCenter(messageToPlayer, background, 0, 50);
 }
 
 function update () {
+  if (cursors.space.isDown && !isGameStarted) {
+    isGameStarted = true;
+    messageToPlayer.text = 'Press UP arrow "^" to stay upright and\ndon\'t hit the columns or the ground';
+  }
+  if (!isGameStarted) {
+    bird.setVelocityY(-160);
+  }
+
+  if (cursors.up.isDown && !hasLanded && !hasBumped) {
+    bird.setVelocityY(-160);
+  }
+  bird.body.velocity.x = hasLanded || hasBumped || !isGameStarted ? 0 : 50;
+
+  if (hasLanded || hasBumped) {
+    messageToPlayer.text = 'You crashed xd\nRefresh the page to try again';
+  }
+
+  if(bird.x > 750) {
+    bird.setVelocityY(40);
+    messageToPlayer.text = 'Nice, you did it\n\nRefresh to play again'
+  }
 }
