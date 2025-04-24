@@ -93,6 +93,6 @@ function update () {
 
   if(bird.x > 750) {
     bird.setVelocityY(40);
-    messageToPlayer.text = 'Nice, you did it\n\nRefresh to play again'
+    messageToPlayer.text = 'Nice, you did it\nRefresh to play again'
   }
 }
