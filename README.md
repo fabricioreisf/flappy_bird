@@ -7,8 +7,8 @@ That's my final project for the Javascript base course in @Codédex-io ! It is a
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/fabricioreisf/personality_quiz.git
-cd personality_quiz
+git clone https://github.com/fabricioreisf/flappy_bird.git
+cd flappy_bird
 ```
 Instale as dependências:
 
@@ -21,5 +21,5 @@ npm run dev
 ````
 Acesse o aplicativo no navegador:
 ```bash
-http://localhost:5173
+http://localhost:3000
 ````
